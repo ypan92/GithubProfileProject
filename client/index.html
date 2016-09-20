@@ -9,14 +9,15 @@
 	<style>
 		body{margin-top: 30px;}
 		.label{margin-right: 10px;}
-		.repoItem{background:#f9f9f9;border: #f4f4f4 1px solid;padding:20px 10px;border-radius: 10px;margin-bottom: 10px;}
-
+		.repoItem{background:#f9f9f9;border: #f4f4f4 1px solid;padding:10px 10px;border-radius: 5px;margin-bottom: 10px;}
+		.form-control{width:450px !important;margin-right: 10px;}
+		form{text-align: center;margin-bottom: 35px;background: #f4f4f4; padding: 20px 10px;border-radius: 10px;}
 	</style>
 </head>
 <body>
 	<div id="container">
 		<div class="row">
-			<div class="col-md-6 col-md-offset-3">
+			<div class="col-md-8 col-md-offset-2">
 				<div id="github-profiles"></div>
 			</div>
 		</div>
@@ -24,6 +25,12 @@
 	
 	<script type="text/babel">
 		var Profile = React.createClass({
+			handleFormSubmit: function(username){
+				this.setState({username: username}, function(){
+					this.loadUserData();
+					this.loadRepoData();
+				});
+			},
 			getDefaultProps: function(){
 				return {
 					clientId:"3b0a83253892c47c3016",
@@ -36,7 +43,7 @@
 			},
 			getInitialState: function(){
 				return {
-					username: "ypan92",
+					username: null,
 					userData: [],
 					repoData: []
 				}
@@ -78,8 +85,9 @@
 			render: function(){
 				return(
 						<div>
-							<UserInfo userData={this.state.userData} />
-							<Repos repoData={this.state.repoData} />
+							<SearchForm onFormSubmit={this.handleFormSubmit} />
+							{this.state.username ? <UserInfo userData={this.state.userData} /> : null}
+							{this.state.username ? <Repos repoData={this.state.repoData} /> : null}
 						</div>
 					);
 			}
@@ -145,6 +153,29 @@
 							<h4><a target="_blank" href={this.props.url}>{this.props.name}</a></h4>
 							<p>{this.props.description}</p>
 						</div>
+					);
+			}
+		});
+
+		var SearchForm = React.createClass({
+			submitForm: function(e){
+				e.preventDefault();
+				var username = this.refs.username.value.trim();
+				if (!username) {
+					alert("Please Enter User");
+					return;
+				}
+				this.props.onFormSubmit(username);
+				this.refs.username.value = "";
+			},
+			render: function(){
+				return(
+						<form onSubmit={this.submitForm} className="form-inline">
+							<div className="form-group">
+								<input type="text" ref="username" className="form-control searchInput" placeholder="Enter Github Username" />
+							</div>
+							<button type="submit" className="btn btn-primary">Submit</button>
+						</form>
 					);
 			}
 		});

@@ -1,0 +1,96 @@
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/react@15.3.1/dist/react.js"></script>
+	<script src="https://unpkg.com/react-dom@15.3.1/dist/react-dom.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.25/browser.min.js"></script>
+</head>
+<body>
+	<div id="container">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3">
+				<div id="github-profiles"></div>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/babel">
+		var Profile = React.createClass({
+			getDefaultProps: function(){
+				return {
+					clientId:"3b0a83253892c47c3016",
+					clientSecret:"e1ce4d8e1af2ea1dc610fcd85c8ba7989e6c51c9",
+					urls: {
+						user: "https://api.github.com/users"
+					},
+					perPage:5
+				}
+			},
+			getInitialState: function(){
+				return {
+					username: "ypan92",
+					userData: [],
+					repoData: []
+				}
+			},
+			loadUserData: function(){
+				$.ajax({
+					url: this.props.urls.user + "/" + this.state.username + "?client_id=" + this.props.clientId + "&cliend_secret=" + this.props.clientSecret,
+					dataType: "json",
+					cache: false,
+					success: function(data){
+						console.log(data);
+						this.setState({userData: data});
+					}.bind(this),
+					error: function(xhr, status, err){
+						this.setState({username: null});
+						alert(err);
+					}.bind(this)
+				});
+			},
+			loadRepoData: function(){
+
+			},
+			componentDidMount: function(){
+				this.loadUserData();
+				this.loadRepoData();
+			},
+			render: function(){
+				return(
+						<div>
+							<UserInfo />
+							<Repos />
+						</div>
+					);
+			}
+		});
+
+		var UserInfo = React.createClass({
+			render: function(){
+				return(
+						<div>
+							USERINFO
+						</div>
+					);
+			}
+		});
+
+		var Repos = React.createClass({
+			render: function(){
+				return(
+						<div>
+							REPOS
+						</div>
+					);
+			}
+		});
+
+		ReactDOM.render(
+				<Profile />,
+				document.getElementById("github-profiles")
+			);
+	</script>
+</body>
+</html>
